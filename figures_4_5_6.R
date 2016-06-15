@@ -27,7 +27,7 @@ additional.ratio <- 0.5
 
 results <- list()
 
-print("starting...")
+warning("Starting very complex simulations. Depending on their settings, they may take several days...")
 
 for(k in c(5)){
   results[[paste0("student.noise_df_", degrees.freedom, "_", k)]] =
