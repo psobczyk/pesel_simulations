@@ -2,7 +2,9 @@
 #' Piotr.Sobczyk (at) pwr.edu.pl 
 #' 
 #' 
-path_to_matlab="/usr/local/MATLAB/R2013a/bin/matlab"
+
+path_to_matlab=NULL
+if(is.null(path_to_matlab)) stop("Please specify variable path_to_matlab in file 'figure2.R'")
 
 source("data_generation_fixed_effects.R")
 

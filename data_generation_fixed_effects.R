@@ -4,7 +4,8 @@
 #' Simulation schemes, code for comparing methods
 #' 
 
-path_to_matlab="/usr/local/MATLAB/R2013a/bin/matlab"
+path_to_matlab=NULL
+if(is.null(path_to_matlab)) stop("Please specify variable path_to_matlab in file 'data_generation_fixed_effects.R'")
 
 compare_methods <- function(simulation_function, numb.repetitions = 10, 
                             n = 50, SNRs = c(1), vars = c(50,100), k = 2, 
