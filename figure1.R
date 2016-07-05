@@ -1,7 +1,7 @@
 
 library(ggplot2)
-library(devtools)
-install_github("psobczyk/varclust")
+# library(devtools)
+# install_github("psobczyk/varclust")
 library(varclust)
 
 simulation_homogenous_eigenvalues <- function (SNR, k, n, numb.vars, scale = TRUE) {

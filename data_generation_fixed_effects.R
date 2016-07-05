@@ -167,7 +167,7 @@ data.simulation.student.noise <- function(SIGNAL=NULL, n = 100, SNR = 1, numb.va
     
   }
   
-  X <- SIGNAL + replicate(numb.vars, sigma*rt(n, df = df))
+  X <- SIGNAL + replicate(numb.vars, sigma*rt(n, df = df)*sqrt((df-2)/df) )
   if(scale){
     X = scale(X)
   }
