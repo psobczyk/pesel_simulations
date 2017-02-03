@@ -5,7 +5,7 @@
 #' 
 path_to_matlab=NULL
 if(is.null(path_to_matlab)) stop("Please specify variable path_to_matlab in file 'figure3.R'")
- 
+
 source("data_generation_fixed_effects.R")
 
 library(varclust)
@@ -27,7 +27,7 @@ scale <- TRUE
 maxPC <- 2*k
 
 methods.names <- c("PESEL n hetero", "Laplace evidence", "PESEL p hetero",
-									 "GCV", "PESEL p homo", "Passemier", "CSV")
+                   "GCV", "PESEL p homo", "Passemier", "CSV")
 
 results <- NULL
 
@@ -118,9 +118,9 @@ for(i in 1:length(SNRs)){
       result = read.csv(resFileName)
       
       if(is.na(result$sigma)){
-      	tabela[7,rep] <- 1
+        tabela[7,rep] <- 1
       } else{
-      	tabela[7,rep] <- min(result$k,maxPC)
+        tabela[7,rep] <- min(result$k,maxPC)
       }
       results[[paste0(SNR, "_", var)]] <- tabela
       
@@ -141,34 +141,34 @@ library(ggplot2)
 background="white"
 main_color="darkred"
 PeselPlotTheme <- theme(
-	legend.position = "bottom",
-	legend.direction = "horizontal",
-	legend.box = "horizontal",
-	legend.title = element_text(face = "italic", size = 17),
-	legend.background = element_rect(fill = background),
-	legend.key = element_rect(fill = background, colour = background),
-	legend.text = element_text(size = 16),
-	plot.background = element_rect(fill = background, colour = background),
-	panel.background = element_rect(fill = background),
-	panel.background = element_rect(fill = "white"),
-	plot.title = element_text(face = "italic", size = 24, vjust = 1),
-	panel.grid.major.x = element_blank(),
-	panel.grid.major.y = element_line(),
-	panel.grid.minor.y = element_line(),
-	panel.grid.minor.x = element_line(colour = "gray95", size=1.5),
-	axis.title = element_text(size = 17),
-	axis.text = element_text(size = 15),
-	strip.text.x = element_text(size = 17, colour = "white"),
-	strip.background = element_rect(fill = main_color),
-	axis.ticks.x = element_blank()
+  legend.position = "bottom",
+  legend.direction = "horizontal",
+  legend.box = "horizontal",
+  legend.title = element_text(face = "italic", size = 17),
+  legend.background = element_rect(fill = background),
+  legend.key = element_rect(fill = background, colour = background),
+  legend.text = element_text(size = 16),
+  plot.background = element_rect(fill = background, colour = background),
+  panel.background = element_rect(fill = background),
+  panel.background = element_rect(fill = "white"),
+  plot.title = element_text(face = "italic", size = 24, vjust = 1),
+  panel.grid.major.x = element_blank(),
+  panel.grid.major.y = element_line(),
+  panel.grid.minor.y = element_line(),
+  panel.grid.minor.x = element_line(colour = "gray95", size=1.5),
+  axis.title = element_text(size = 17),
+  axis.text = element_text(size = 15),
+  strip.text.x = element_text(size = 17, colour = "white"),
+  strip.background = element_rect(fill = main_color),
+  axis.ticks.x = element_blank()
 )
 
 y <- NULL
 result <- results
 characteristics <- lapply(strsplit(names(result), "_"), as.numeric)
 for(i in 1:length(result)){
-	y <- rbind(y, data.frame(pc=as.vector(result[[i]]), method=rep(method.names, numb.repetitions),
-													 snr=characteristics[[i]][1], variables=characteristics[[i]][2]))
+  y <- rbind(y, data.frame(pc=as.vector(result[[i]]), method=rep(method.names, numb.repetitions),
+                           snr=characteristics[[i]][1], variables=characteristics[[i]][2]))
 }
 y$pc <- pmax(1,floor(y$pc))
 
@@ -179,30 +179,30 @@ selected.variables.number <- c(150, 1600)
 selected.method2 <- method.names[c(1,2,3,4,6,7)]
 
 y %>% filter(method %in% selected.method2,
-						 snr %in% selected.snrs,
-						 variables %in% selected.variables.number) %>% 
-	mutate(snr=factor(snr)) %>% group_by(snr, variables, method) %>% 
-	summarise(MeanPCs=mean(pc), SdPCs=sd(pc)/sqrt(n())) -> data5
+             snr %in% selected.snrs,
+             variables %in% selected.variables.number) %>% 
+  mutate(snr=factor(snr)) %>% group_by(snr, variables, method) %>% 
+  summarise(MeanPCs=mean(pc), SdPCs=sd(pc)/sqrt(n())) -> data5
 
 new.lables=expression(paste("PESEL", phantom()["n"]^{"hetero"}), "CSV", "GCV", 
-											paste("PESEL", phantom()["p"]^{"hetero"}), "Laplace Evidence", 
-											"Passemier")
+                      paste("PESEL", phantom()["p"]^{"hetero"}), "Laplace Evidence", 
+                      "Passemier")
 
 ggplot(data5, aes(x=snr, y=MeanPCs)) + 
-	geom_line(aes(group=method, color=method, linetype=method), size=1.2) +
-	# geom_errorbar(aes(ymin=MeanPCs-SdPCs, ymax=MeanPCs+SdPCs, color=method, alpha=1)) +
-	facet_grid(.~variables) +
-	ggtitle(paste0("Estimated number of PCs as a function of SNR")) +
-	xlab("Signal to noise ratio (SNR)") +
-	ylab("Mean estimated number of principal components") +
-	scale_linetype_manual(values=c("solid", "dashed", "dotdash", "dotted", "longdash", "twodash")[seq_along(method.names)],
-												labels = new.lables) +
-	scale_color_discrete("Method", labels = new.lables) +
-	scale_x_discrete(breaks=selected.snrs[-c(2,4)]) +
-	PeselPlotTheme +
-	guides(colour=guide_legend(nrow=2,byrow=TRUE), alpha=FALSE,
-				 linetype=guide_legend("Method",nrow=2,byrow=TRUE, override.aes = c(size=1.7), 
-				 											label.position = "bottom", label.hjust = 0.5,
-				 											title.position = "left", keyheight=3, keywidth=14))
+  geom_line(aes(group=method, color=method, linetype=method), size=1.2) +
+  # geom_errorbar(aes(ymin=MeanPCs-SdPCs, ymax=MeanPCs+SdPCs, color=method, alpha=1)) +
+  facet_grid(.~variables) +
+  ggtitle(paste0("Estimated number of PCs as a function of SNR")) +
+  xlab("Signal to noise ratio (SNR)") +
+  ylab("Mean estimated number of principal components") +
+  scale_linetype_manual(values=c("solid", "dashed", "dotdash", "dotted", "longdash", "twodash")[seq_along(method.names)],
+                        labels = new.lables) +
+  scale_color_discrete("Method", labels = new.lables) +
+  scale_x_discrete(breaks=selected.snrs[-c(2,4)]) +
+  PeselPlotTheme +
+  guides(colour=guide_legend(nrow=2,byrow=TRUE), alpha=FALSE,
+         linetype=guide_legend("Method",nrow=2,byrow=TRUE, override.aes = c(size=1.7), 
+                               label.position = "bottom", label.hjust = 0.5,
+                               title.position = "left", keyheight=3, keywidth=14))
 
 ggsave(filename = "figure3.png", height = 8, width = 14)

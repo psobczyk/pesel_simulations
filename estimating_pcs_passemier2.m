@@ -1,5 +1,5 @@
 %required vars is id and kmax
-xFileName= strcat('x_',id, '.csv');
+xFileName= strcat('temp_data/x_',id, '.csv');
 
 x = csvread(xFileName);
 
@@ -75,7 +75,7 @@ lambda=Fhat'*X;
 chat=Fhat*lambda;
 
 %%
-resFileName= strcat('res_',id, '.csv');
+resFileName= strcat('temp_data/res_',id, '.csv');
 fileID = fopen(resFileName,'w');
 k = ic1;
 fprintf(fileID, 'k, sigma\n');

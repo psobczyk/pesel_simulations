@@ -1,4 +1,4 @@
-xFileName= strcat('x_',id, '.csv');
+xFileName= strcat('temp_data/x_',id, '.csv');
 
 Y = csvread(xFileName);
 
@@ -33,7 +33,7 @@ for k=2:(maxPC)
 end
 
 %%
-resFileName= strcat('res_',id, '.csv');
+resFileName= strcat('temp_data/res_',id, '.csv');
 fileID = fopen(resFileName,'w');
 k = find(R_W>0.05, 1, 'first')-1;
 fprintf(fileID, 'k, sigma\n');
