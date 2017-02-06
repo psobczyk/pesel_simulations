@@ -3,7 +3,7 @@ library(dplyr)
 
 source("plot_templates.R")
 
-date = "2017_02_03"
+date = "2017_02_05"
 
 scheme.names <- c("Student noise", "Additional variables", "Lognormal coefficients")
 method.names <- c("Minka BIC", "Laplace evidence", "Properly dervied BIC",
@@ -39,6 +39,12 @@ selected.variables.number <- c(150, 800)
 selected.snrs <- c(0.25, 0.5, 0.63, 0.75, 1, 2.00, 8)
 sim.scenario = 2
 selected.method <- method.names[c(1,3,4,7)]
+
+selected.variables.number <- c(150, 800)
+selected.snrs <- c(0.25, 0.5, 0.63, 0.75, 1, 2.00, 8)
+sim.scenario = 3
+selected.method <- method.names[c(1,3,4,7)]
+
 
 plot_facet_vars(y, scheme.names, sim.scenario, selected.method, selected.snrs, selected.variables.number)
 plot_name <- paste0(gsub(" ", "_", scheme.names[sim.scenario]), "_", 

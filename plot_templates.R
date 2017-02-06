@@ -1,5 +1,7 @@
 
 library(ggplot2)
+library(dplyr)
+
 background="white"
 main_color="darkred"
 sobczykPlotTheme <- theme(
@@ -12,7 +14,6 @@ sobczykPlotTheme <- theme(
   legend.text = element_text(size = 16),
   plot.background = element_rect(fill = background, colour = background),
   panel.background = element_rect(fill = background),
-  panel.background = element_rect(fill = "white"),
   plot.title = element_text(face = "italic", size = 24, vjust = 1),
   panel.grid.major.x = element_blank(),
   panel.grid.major.y = element_line(),
