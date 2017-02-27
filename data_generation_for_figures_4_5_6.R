@@ -47,15 +47,15 @@ for(k in c(5)){
     compare_methods(partial(data.simulation.student.noise, df=degrees.freedom), numb.repetitions = numb.repetitions,
                     n = n, SNRs = SNRs, vars = vars, k = k, scale = TRUE, id = args[[1]])
   print("student noise done")
-  
+
   results[[paste0("additional.variables_ratio_", additional.ratio, "_", k)]] =
     compare_methods(partial(data.simulation.additional.variables, ratio = additional.ratio),
                                                      numb.repetitions = numb.repetitions, n = n, SNRs = SNRs, vars = vars,
                                                      k = k, scale = TRUE, id = args[[1]])
   print("additional.variables done")
   
-  results[[paste0("lognormal.coefficients_mu_", mulog, "_sd_", sdlog, "_", k)]] =
-    compare_methods(partial(data.simulation.lognormal.coefficients, mu = mulog, sd = sdlog), numb.repetitions = numb.repetitions,
+  results[[paste0("lognormal.noise_mu_", mulog, "_sd_", sdlog, "_", k)]] =
+    compare_methods(partial(data.simulation.lognormal.noise, mu = mulog, sd = sdlog), numb.repetitions = numb.repetitions,
                     n = n, SNRs = SNRs, vars = vars, k = k, scale = TRUE, id = args[[1]])
   print("additional.variables done")
 }

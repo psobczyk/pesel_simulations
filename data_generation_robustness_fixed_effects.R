@@ -200,7 +200,7 @@ data.simulation.additional.variables <- function(SIGNAL=NULL, n = 100, SNR = 1, 
               signal = SIGNAL))
 }
 
-data.simulation.lognormal.coefficients <- function(SIGNAL=NULL, n = 100, SNR = 1, numb.vars = 30, k = 2, scale = TRUE, mu = 0, sd = 1){
+data.simulation.lognormal.noise <- function(SIGNAL=NULL, n = 100, SNR = 1, numb.vars = 30, k = 2, scale = TRUE, mu = 0, sd = 1){
   sigma <- 1/SNR
   
   X <- NULL
@@ -211,12 +211,12 @@ data.simulation.lognormal.coefficients <- function(SIGNAL=NULL, n = 100, SNR = 1
     #factors are drawn from normal distribution
     factors <- replicate(k, rnorm(n, 0, 1))
     #coefficients are drawn from lognormal distribution
-    coeff <- replicate(numb.vars, rlnorm(k, 0, 1))
+    coeff <- replicate(numb.vars, rnorm(k, 0, 1))
     SIGNAL <- factors %*% coeff
-    
   }
   
-  X <- SIGNAL + replicate(numb.vars, sigma*rnorm(n, 0, 1))
+  lnsd = sqrt((exp(sd^2)-1)*exp(2*mu + sd^2))
+  X <- SIGNAL + replicate(numb.vars, sigma/lnsd*rlnorm(n, meanlog = mu, sdlog = sd))
   if(scale){
     X = scale(X)
   }
