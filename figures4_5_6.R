@@ -3,9 +3,9 @@ library(dplyr)
 
 source("plot_templates.R")
 
-date = "2017_02_05"
+date = "2017_02_28"
 
-scheme.names <- c("Student noise", "Additional variables", "Lognormal coefficients")
+scheme.names <- c("Student noise", "Additional variables", "Lognormal noise")
 method.names <- c("Minka BIC", "Laplace evidence", "Properly dervied BIC",
                   "GCV", "Rajan - penalized version", "Passemier", "CSV")
 
@@ -41,7 +41,7 @@ sim.scenario = 2
 selected.method <- method.names[c(1,3,4,7)]
 
 selected.variables.number <- c(150, 800)
-selected.snrs <- c(0.25, 0.5, 0.63, 0.75, 1, 2.00, 8)
+selected.snrs <- c(0.25, 0.375, 0.5, 0.63, 1, 2.00, 8)
 sim.scenario = 3
 selected.method <- method.names[c(1,3,4,7)]
 
