@@ -3,7 +3,8 @@
 #' 
 #' 
 
-pathToMatlab=path_to_matlab
+path_to_matlab=NULL
+if(is.null(path_to_matlab)) stop("Please specify variable path_to_matlab in file 'data_generation_for_figures_4_5_6.R'")
 
 source("data_generation_robustness_fixed_effects.R")
 
@@ -46,18 +47,18 @@ print("starting...")
 for(k in c(5)){
   results[[paste0("student.noise_df_", degrees.freedom, "_", k)]] =
     compare_methods(partial(data.simulation.student.noise, df=degrees.freedom), numb.repetitions = numb.repetitions,
-                    n = n, SNRs = SNRs, vars = vars, k = k, scale = TRUE, id = args[[1]], pathToMatlab = pathToMatlab)
+                    n = n, SNRs = SNRs, vars = vars, k = k, scale = TRUE, id = args[[1]], pathToMatlab = path_to_matlab)
   print("student noise done")
 
   results[[paste0("additional.variables_ratio_", additional.ratio, "_", k)]] =
     compare_methods(partial(data.simulation.additional.variables, ratio = additional.ratio),
                                                      numb.repetitions = numb.repetitions, n = n, SNRs = SNRs, vars = vars,
-                                                     k = k, scale = TRUE, id = args[[1]], pathToMatlab = pathToMatlab)
+                                                     k = k, scale = TRUE, id = args[[1]], pathToMatlab = path_to_matlab)
   print("additional.variables done")
   
   results[[paste0("lognormal.noise_mu_", mulog, "_sd_", sdlog, "_", k)]] =
     compare_methods(partial(data.simulation.lognormal.noise, mu = mulog, sd = sdlog), numb.repetitions = numb.repetitions,
-                    n = n, SNRs = SNRs, vars = vars, k = k, scale = TRUE, id = args[[1]], pathToMatlab = pathToMatlab)
+                    n = n, SNRs = SNRs, vars = vars, k = k, scale = TRUE, id = args[[1]], pathToMatlab = path_to_matlab)
   print("additional.variables done")
 }
 

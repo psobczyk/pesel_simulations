@@ -5,8 +5,10 @@
 
 compare_methods <- function(simulation_function, numb.repetitions = 10, 
                             n = 50, SNRs = c(1), vars = c(50,100), k = 2, 
-                            scale=TRUE, maxPC = NULL, id='A', 
-                            pathToMatlab="/usr/local/MATLAB/R2013a/bin/matlab"){
+                            scale=TRUE, maxPC = NULL, id = 'A', 
+                            pathToMatlab = NULL){
+  
+  if(is.null(pathToMatlab)) stop("Please specify variable path_to_matlab in file 'data_generation_for_figures_4_5_6.R'")
   require(pesel)
   require(FactoMineR)
   if(is.null(maxPC)) maxPC = 2*k
@@ -16,11 +18,11 @@ compare_methods <- function(simulation_function, numb.repetitions = 10,
   
   results <- NULL
   
-  tabela <- matrix(0, nrow=length(methods.names), ncol=numb.repetitions)
+  tabela <- matrix(0, nrow = length(methods.names), ncol = numb.repetitions)
 
   for(i in 1:length(SNRs)){
     for(j in 1:length(vars)){
-      tabela <- matrix(0, nrow=length(methods.names), ncol=numb.repetitions)
+      tabela <- matrix(0, nrow = length(methods.names), ncol = numb.repetitions)
       SNR <- SNRs[i]
       var <- vars[j]
       
@@ -28,7 +30,7 @@ compare_methods <- function(simulation_function, numb.repetitions = 10,
                                    k = k, scale = scale)$signal
       
       for(rep in 1:numb.repetitions){
-        sim.data <- simulation_function(SIGNAL=SIGNAL, n = n, SNR = SNR, numb.vars = var, 
+        sim.data <- simulation_function(SIGNAL = SIGNAL, n = n, SNR = SNR, numb.vars = var, 
                                         k = k, scale = scale)
         
         BICs <- pesel(sim.data$X, 1, maxPC, method = "heterogenous", asymptotics = "n")$vals
@@ -37,13 +39,13 @@ compare_methods <- function(simulation_function, numb.repetitions = 10,
         tabela[2,rep] <- which.max(BICs)
         BICs <- pesel(sim.data$X, 1, maxPC, method = "heterogenous", asymptotics = "p")$vals
         tabela[3,rep] <- which.max(BICs)
-        estimatedNpc <- estim_ncp(sim.data$X, ncp.min = 1, ncp.max = maxPC, method =  "GCV")$ncp
+        estimatedNpc <- estim_ncp(sim.data$X, ncp.min = 1, ncp.max = maxPC, method = "GCV")$ncp
         tabela[4,rep] <- estimatedNpc
         BICs <- pesel(sim.data$X, 1, maxPC, method = "homogenous", asymptotics = "p")$vals
         tabela[5,rep] <- which.max(BICs)
         
         xFileName = paste0("temp_data/x_", id, ".csv")
-        write.table(sim.data$X, sep=",", dec=".", file = xFileName, col.names=FALSE, row.names = FALSE)
+        write.table(sim.data$X, sep = ",", dec = ".", file = xFileName, col.names = FALSE, row.names = FALSE)
         command = paste0(pathToMatlab, " -nodisplay -r \"id='", id, 
                          "'; kmax=", maxPC, "; run('estimating_pcs_passemier2.m'); exit\"")
         system(command, ignore.stdout = TRUE, ignore.stderr = TRUE)
@@ -76,31 +78,31 @@ compare_methods <- function(simulation_function, numb.repetitions = 10,
       
         ### creating lambda grid
         lam0 <- lambda0(sim.data$X)
-        lamseq=exp(seq(from=log(lam0),to=log(1),length=20))
+        lamseq=exp(seq(from = log(lam0),to = log(1),length = 20))
       
         ### cross-validation
-        error <- matrix(0, nrow=n.folds, ncol=20)
+        error <- matrix(0, nrow = n.folds, ncol = 20)
         for(fold.i in 1:n.folds){
           xs <- sim.data$X
           xs[which(folds==fold.i)] <- NA
           for(lambda.j in seq_along(lamseq)){
             lambda=lamseq[lambda.j]
-            fits=softImpute(xs, rank.max=5, type="svd", lambda = lambda)
-            if(fits$d[1]!=0){
-              error[fold.i,lambda.j] <- sum((sim.data$X-fits$u%*%diag(fits$d)%*%t(fits$v))[which(folds==fold.i)]^2)
+            fits=softImpute(xs, rank.max = 5, type = "svd", lambda = lambda)
+            if(fits$d[1] != 0){
+              error[fold.i,lambda.j] <- sum((sim.data$X - fits$u %*% diag(fits$d) %*% t(fits$v))[which(folds == fold.i)]^2)
             } else {
-              error[fold.i,lambda.j] <- sum((sim.data$X[which(folds==fold.i)])^2)
+              error[fold.i,lambda.j] <- sum((sim.data$X[which(folds == fold.i)])^2)
             }
           }
         }
       
         #estimating sigma
-        fits=softImpute(sim.data$X, rank.max = 5, lambda = lamseq[which.min(colMeans(error))],type="svd")
-        deg.free <- sum(fits$d>0)
-        if(deg.free!=0){
-          sigma.hat <- sum((sim.data$X-fits$u%*%diag(fits$d)%*%t(fits$v))^2)/(n*(p-deg.free))
+        fits=softImpute(sim.data$X, rank.max = 5, lambda = lamseq[which.min(colMeans(error))],type = "svd")
+        deg.free <- sum(fits$d > 0)
+        if(deg.free != 0){
+          sigma.hat <- sum((sim.data$X - fits$u %*% diag(fits$d) %*% t(fits$v))^2)/(n * (p - deg.free))
         } else{
-          sigma.hat <- sum((sim.data$X)^2)/(n*(p-deg.free))
+          sigma.hat <- sum((sim.data$X)^2)/(n*(p - deg.free))
         }
       
         command = paste0(pathToMatlab, " -nodisplay -r \"id='", id,
@@ -131,19 +133,19 @@ compare_methods <- function(simulation_function, numb.repetitions = 10,
 #' @keywords internal
 #' @references Automatic choice of dimensionality for PCA, Thomas P. Minka
 #' @return L value of Laplace evidence
-pca.Laplace <- function(X, k, alfa=1){
+pca.Laplace <- function(X, k, alfa = 1){
   X <- t(X)
   d <- dim(X)[1]
   N <- dim(X)[2]
   m <- d*k - k*(k+1)/2
   
   lambda <- abs(eigen(cov(t(X)), only.values = TRUE)$values)
-  v <- sum(lambda[(k+1):d])/(d-k) 
+  v <- sum(lambda[(k + 1):d])/(d - k) 
   
   t1 <- -N/2*sum(log(lambda[0:k]))
   t2 <- -N*(d-k)/2*log(v)
   t3 <- -k/2*log(N)
-  if(k>0){
+  if(k > 0){
     Az <- sapply(1:k, function(i) sum( log(1/lambda[(i+1):d] - 1/lambda[i] ) + log(lambda[i] - lambda[(i+1):d]) + log(N) ))
     if( any(is.nan(Az)) )
       warning(paste("Number of observations ", N, " is to little compared to number of variables ", d, 
@@ -155,10 +157,10 @@ pca.Laplace <- function(X, k, alfa=1){
   t4 <- sum(Az)*(-1)/2
   t5 <- log(2*pi)*(m+k)/2
   t6 <- -k*log(2) + sum( lgamma( (d-1:k+1)/2 ) - (d-1:k+1)/2*log(pi) )
-  t1+t2+t3+t4+t5+t6
+  t1 + t2 + t3 + t4 + t5 + t6
 }
 
-data.simulation.model <- function(n = 100, SNR = 1, numb.vars = 30, k= 2, scale = TRUE){
+data.simulation.model <- function(n = 100, SNR = 1, numb.vars = 30, k = 2, scale = TRUE){
   sigma <- 1/SNR
   
   X <- NULL
@@ -179,7 +181,7 @@ data.simulation.model <- function(n = 100, SNR = 1, numb.vars = 30, k= 2, scale 
               factors = factors))
 }
 
-data.simulation.student.noise <- function(SIGNAL=NULL, n = 100, SNR = 1, numb.vars = 30, k = 2, scale = TRUE, df = 2){
+data.simulation.student.noise <- function(SIGNAL = NULL, n = 100, SNR = 1, numb.vars = 30, k = 2, scale = TRUE, df = 2){
   sigma <- 1/SNR
   
   X <- NULL
@@ -204,7 +206,7 @@ data.simulation.student.noise <- function(SIGNAL=NULL, n = 100, SNR = 1, numb.va
 }
 
 
-data.simulation.additional.variables <- function(SIGNAL=NULL, n = 100, SNR = 1, numb.vars = 30, k = 2, scale = TRUE, ratio = 0.5){
+data.simulation.additional.variables <- function(SIGNAL = NULL, n = 100, SNR = 1, numb.vars = 30, k = 2, scale = TRUE, ratio = 0.5){
   sigma <- 1/SNR
   
   X <- NULL
@@ -228,7 +230,7 @@ data.simulation.additional.variables <- function(SIGNAL=NULL, n = 100, SNR = 1, 
               signal = SIGNAL))
 }
 
-data.simulation.lognormal.noise <- function(SIGNAL=NULL, n = 100, SNR = 1, numb.vars = 30, k = 2, scale = TRUE, mu = 0, sd = 1){
+data.simulation.lognormal.noise <- function(SIGNAL = NULL, n = 100, SNR = 1, numb.vars = 30, k = 2, scale = TRUE, mu = 0, sd = 1){
   sigma <- 1/SNR
   
   X <- NULL
