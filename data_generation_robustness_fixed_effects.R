@@ -7,7 +7,7 @@ compare_methods <- function(simulation_function, numb.repetitions = 10,
                             n = 50, SNRs = c(1), vars = c(50,100), k = 2, 
                             scale=TRUE, maxPC = NULL, id='A', 
                             pathToMatlab="/usr/local/MATLAB/R2013a/bin/matlab"){
-  require(varclust)
+  require(pesel)
   require(FactoMineR)
   if(is.null(maxPC)) maxPC = 2*k
   
@@ -24,15 +24,6 @@ compare_methods <- function(simulation_function, numb.repetitions = 10,
       SNR <- SNRs[i]
       var <- vars[j]
       
-      # #signal drawn once - fixed effects model
-      # factors <- NULL
-      # #factors are drawn from normal distribution
-      # factors <- replicate(k, rnorm(n, 0, 1))
-      # #coefficients are drawn from uniform distribution
-      # coeff <- replicate(var, rnorm(k, 0, 1))
-      # SIGNAL <- factors %*% coeff
-      # SIGNAL <- scale(SIGNAL)
-      
       SIGNAL = simulation_function(n = n, SNR = SNR, numb.vars = var, 
                                    k = k, scale = scale)$signal
       
@@ -40,15 +31,15 @@ compare_methods <- function(simulation_function, numb.repetitions = 10,
         sim.data <- simulation_function(SIGNAL=SIGNAL, n = n, SNR = SNR, numb.vars = var, 
                                         k = k, scale = scale)
         
-        BICs <- sapply(1:maxPC, function(j) varclust:::pca.BIC(sim.data$X, j))
+        BICs <- pesel(sim.data$X, 1, maxPC, method = "heterogenous", asymptotics = "n")$vals
         tabela[1,rep] <- which.max(BICs)
-        BICs <- sapply(1:maxPC, function(j) varclust:::pca.Laplace(sim.data$X, j))
+        BICs <- sapply(1:maxPC, function(j) pca.Laplace(sim.data$X, j))
         tabela[2,rep] <- which.max(BICs)
-        BICs <- sapply(1:maxPC, function(j) varclust:::pca.new.BIC(sim.data$X, j))
+        BICs <- pesel(sim.data$X, 1, maxPC, method = "heterogenous", asymptotics = "p")$vals
         tabela[3,rep] <- which.max(BICs)
         estimatedNpc <- estim_ncp(sim.data$X, ncp.min = 1, ncp.max = maxPC, method =  "GCV")$ncp
         tabela[4,rep] <- estimatedNpc
-        BICs <- sapply(1:maxPC, function(j) varclust:::rajan.BIC(sim.data$X, j))
+        BICs <- pesel(sim.data$X, 1, maxPC, method = "homogenous", asymptotics = "p")$vals
         tabela[5,rep] <- which.max(BICs)
         
         xFileName = paste0("temp_data/x_", id, ".csv")
@@ -128,6 +119,43 @@ compare_methods <- function(simulation_function, numb.repetitions = 10,
     }
   }
   return(results)
+}
+
+#' Laplace evidence for PCA, as given by Minka
+#' 
+#' Computes the value of Laplace approximation for given data set and 
+#' number of factors.
+#' 
+#' @param X a matrix with only continuous variables
+#' @param k number of principal components fitted
+#' @keywords internal
+#' @references Automatic choice of dimensionality for PCA, Thomas P. Minka
+#' @return L value of Laplace evidence
+pca.Laplace <- function(X, k, alfa=1){
+  X <- t(X)
+  d <- dim(X)[1]
+  N <- dim(X)[2]
+  m <- d*k - k*(k+1)/2
+  
+  lambda <- abs(eigen(cov(t(X)), only.values = TRUE)$values)
+  v <- sum(lambda[(k+1):d])/(d-k) 
+  
+  t1 <- -N/2*sum(log(lambda[0:k]))
+  t2 <- -N*(d-k)/2*log(v)
+  t3 <- -k/2*log(N)
+  if(k>0){
+    Az <- sapply(1:k, function(i) sum( log(1/lambda[(i+1):d] - 1/lambda[i] ) + log(lambda[i] - lambda[(i+1):d]) + log(N) ))
+    if( any(is.nan(Az)) )
+      warning(paste("Number of observations ", N, " is to little compared to number of variables ", d, 
+                    " to perform a meaningful estimation"))
+  } else {
+    Az <- 0
+  }
+  
+  t4 <- sum(Az)*(-1)/2
+  t5 <- log(2*pi)*(m+k)/2
+  t6 <- -k*log(2) + sum( lgamma( (d-1:k+1)/2 ) - (d-1:k+1)/2*log(pi) )
+  t1+t2+t3+t4+t5+t6
 }
 
 data.simulation.model <- function(n = 100, SNR = 1, numb.vars = 30, k= 2, scale = TRUE){

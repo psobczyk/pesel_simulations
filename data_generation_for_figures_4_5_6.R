@@ -3,11 +3,12 @@
 #' 
 #' 
 
-setwd("~/Dropbox/doktorat/moje_prace/subspace_clustering/Sparse_clust_pca/simulations_pesel_for_revision/")
+pathToMatlab=path_to_matlab
+
 source("data_generation_robustness_fixed_effects.R")
 
 library(pryr) #for partial function evaluation
-library(varclust)
+library(pesel)
 library(FactoMineR)
 library(denoiseR)
 library(softImpute)
@@ -26,10 +27,10 @@ n <- 100
 numb.repetitions <- 20
 
 #this setting is just for veryfing that program works!!!!
-# SNRs <- 2^(0:1)
-# vars <- c(40,50)
-# n <- 30
-# numb.repetitions <- 2
+SNRs <- 2^(0:1)
+vars <- c(40,50)
+n <- 30
+numb.repetitions <- 2
 
 
 #violation parameters
@@ -45,18 +46,18 @@ print("starting...")
 for(k in c(5)){
   results[[paste0("student.noise_df_", degrees.freedom, "_", k)]] =
     compare_methods(partial(data.simulation.student.noise, df=degrees.freedom), numb.repetitions = numb.repetitions,
-                    n = n, SNRs = SNRs, vars = vars, k = k, scale = TRUE, id = args[[1]])
+                    n = n, SNRs = SNRs, vars = vars, k = k, scale = TRUE, id = args[[1]], pathToMatlab = pathToMatlab)
   print("student noise done")
 
   results[[paste0("additional.variables_ratio_", additional.ratio, "_", k)]] =
     compare_methods(partial(data.simulation.additional.variables, ratio = additional.ratio),
                                                      numb.repetitions = numb.repetitions, n = n, SNRs = SNRs, vars = vars,
-                                                     k = k, scale = TRUE, id = args[[1]])
+                                                     k = k, scale = TRUE, id = args[[1]], pathToMatlab = pathToMatlab)
   print("additional.variables done")
   
   results[[paste0("lognormal.noise_mu_", mulog, "_sd_", sdlog, "_", k)]] =
     compare_methods(partial(data.simulation.lognormal.noise, mu = mulog, sd = sdlog), numb.repetitions = numb.repetitions,
-                    n = n, SNRs = SNRs, vars = vars, k = k, scale = TRUE, id = args[[1]])
+                    n = n, SNRs = SNRs, vars = vars, k = k, scale = TRUE, id = args[[1]], pathToMatlab = pathToMatlab)
   print("additional.variables done")
 }
 
