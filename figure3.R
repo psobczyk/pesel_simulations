@@ -6,9 +6,9 @@
 path_to_matlab=NULL
 if(is.null(path_to_matlab)) stop("Please specify variable path_to_matlab in file 'figure3.R'")
 
-source("data_generation_fixed_effects.R")
+source("data_generation_robustness_fixed_effects.R")
 
-library(varclust)
+library(pesel)
 library(FactoMineR)
 library(pryr)
 library(softImpute)
@@ -42,15 +42,15 @@ for(i in 1:length(SNRs)){
       sim.data <- data.fixed.model(object=sim.data_old, n = n, SNR = SNR, 
                                    numb.vars = var, k = k, scale = scale)
       
-      BICs <- sapply(1:maxPC, function(j) varclust:::pca.BIC(sim.data$X, j))
+      BICs <- pesel(sim.data$X, 1, maxPC, method = "heterogenous", asymptotics = "n")$vals
       tabela[1,rep] <- which.max(BICs)
-      BICs <- sapply(1:maxPC, function(j) varclust:::pca.Laplace(sim.data$X, j))
+      BICs <- sapply(1:maxPC, function(j) pca.Laplace(sim.data$X, j))
       tabela[2,rep] <- which.max(BICs)
-      BICs <- sapply(1:maxPC, function(j) varclust:::pca.new.BIC(sim.data$X, j))
+      BICs <- pesel(sim.data$X, 1, maxPC, method = "heterogenous", asymptotics = "p")$vals
       tabela[3,rep] <- which.max(BICs)
-      estimatedNpc <- estim_ncp(sim.data$X, ncp.min = 0, ncp.max = maxPC, method =  "GCV")$ncp
+      estimatedNpc <- estim_ncp(sim.data$X, ncp.min = 1, ncp.max = maxPC, method =  "GCV")$ncp
       tabela[4,rep] <- estimatedNpc
-      BICs <- sapply(1:maxPC, function(j) varclust:::rajan.BIC(sim.data$X, j))
+      BICs <- pesel(sim.data$X, 1, maxPC, method = "homogenous", asymptotics = "p")$vals
       tabela[5,rep] <- which.max(BICs)
       
       xFileName = paste0("x_", id, ".csv")
