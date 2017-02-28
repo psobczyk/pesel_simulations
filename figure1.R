@@ -1,7 +1,7 @@
 
 library(ggplot2)
-# devtools::install_github("psobczyk/varclust")
-library(varclust)
+# devtools::install_github("psobczyk/pesel")
+library(pesel)
 
 simulation_homogenous_eigenvalues <- function (SNR, k, n, numb.vars, scale = TRUE) {
   sigma <- 1/SNR
