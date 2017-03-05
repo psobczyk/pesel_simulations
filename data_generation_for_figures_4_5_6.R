@@ -28,10 +28,10 @@ n <- 100
 numb.repetitions <- 20
 
 #this setting is just for veryfing that program works!!!!
-SNRs <- 2^(0:1)
-vars <- c(40,50)
-n <- 30
-numb.repetitions <- 2
+# SNRs <- 2^(0:1)
+# vars <- c(40,50)
+# n <- 30
+# numb.repetitions <- 2
 
 
 #violation parameters
@@ -59,7 +59,7 @@ for(k in c(5)){
   results[[paste0("lognormal.noise_mu_", mulog, "_sd_", sdlog, "_", k)]] =
     compare_methods(partial(data.simulation.lognormal.noise, mu = mulog, sd = sdlog), numb.repetitions = numb.repetitions,
                     n = n, SNRs = SNRs, vars = vars, k = k, scale = TRUE, id = args[[1]], pathToMatlab = path_to_matlab)
-  print("additional.variables done")
+  print("log-normal noise done")
 }
 
 filename <- paste0("data/robustness_fixed_simulations", args[[1]], "_n_", n, "_", gsub("-", "_", Sys.Date()), ".Rdata")
