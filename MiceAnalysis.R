@@ -13,6 +13,15 @@ res # 5
 plot(res)
 plot(res, posterior = F)
 
+## Pesel with exponential prior
+pc_prior <- dgeom(0:min(ncol(expressions) -2, nrow(expressions)-2), 0.5)
+res <- pesel(expressions, npc.min = 0, npc.max = min(ncol(expressions) -2, nrow(expressions)-2), 
+             prior = pc_prior)
+res # 5
+plot(res)
+plot(res, posterior = F)
+
+
 ## GCV
 res.gcv <- estim_ncp(expressions)
 plot(res.gcv$crit)
