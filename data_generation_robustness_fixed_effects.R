@@ -194,7 +194,7 @@ data.simulation.student.noise <- function(SIGNAL = NULL, n = 100, SNR = 1, numb.
     #coefficients are drawn from uniform distribution
     coeff <- replicate(numb.vars, rnorm(k, 0, 1))
     SIGNAL <- factors %*% coeff
-    
+    SIGNAL <- scale(SIGNAL)
   }
   
   X <- SIGNAL + replicate(numb.vars, sigma*rt(n, df = df)*sqrt((df-2)/df))

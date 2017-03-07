@@ -1,6 +1,7 @@
 #' 
 #' Piotr Sobczyk, PWr 
 #' 
+#' We run this simulations parallel with 5 different arguments passed to the script (A, B, C, D and E)
 #' 
 
 path_to_matlab=NULL

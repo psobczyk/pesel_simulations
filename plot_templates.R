@@ -36,7 +36,7 @@ facet_labeller_vars <- function(variable, value) {
 
 
 plot_facet_vars <- function(y, scheme.names, sim.scenario, selected.method, selected.snrs, selected.variables.number,
-                            new.lables = NULL){
+                            new.labels = NULL){
   y %>% filter(scenario==scheme.names[sim.scenario], method==selected.method[1]) %>% 
     group_by(snr, variables, method) %>%
     summarise(count=n()) %>% ungroup %>% select(count) %>% unlist %>% head(1) -> numb.repetitions
@@ -56,9 +56,10 @@ plot_facet_vars <- function(y, scheme.names, sim.scenario, selected.method, sele
   
   
   title <- paste0(scheme.names[sim.scenario], ". Estimated number of PCs as a function of SNR.")
-  if(is.null(new.lables))
-    new.lables=expression(paste("PESEL", phantom()["n"]^{"hetero"}), "GCV", 
+  if(is.null(new.labels)){
+    new.labels=expression(paste("PESEL", phantom()["n"]^{"hetero"}), "GCV", 
                           paste("PESEL", phantom()["p"]^{"hetero"}), "Passemier")
+  }
   
   ggplot(data4, aes(x=snr, colour=method, group=method, shape=method)) +
     geom_line(data=data5, aes(x=snr, y=MeanPCs)) +

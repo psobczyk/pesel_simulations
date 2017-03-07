@@ -3,7 +3,8 @@ library(dplyr)
 
 source("plot_templates.R")
 
-date = "2017_02_28"
+date = NULL
+if(is.null(date)) stop("Please specify variable date in file 'figures_4_5_6.R'")
 
 scheme.names <- c("Student noise", "Additional variables", "Lognormal noise")
 method.names <- c("Minka BIC", "Laplace evidence", "Properly dervied BIC",
