@@ -8,18 +8,18 @@ dim(expressions)
 # 40 120
 
 ## Pesel analysis
-res <- pesel(expressions, npc.min = 0, npc.max = min(ncol(expressions) -2, nrow(expressions)-2))
+res <- pesel(expressions, npc.min = 0, npc.max = min(ncol(expressions) -2, nrow(expressions)-2), scale = T)
 res # 5
 plot(res)
-plot(res, posterior = F)
+plot(res, posterior = FALSE)
 
 ## Pesel with exponential prior
 pc_prior <- dgeom(0:min(ncol(expressions) -2, nrow(expressions)-2), 0.5)
 res <- pesel(expressions, npc.min = 0, npc.max = min(ncol(expressions) -2, nrow(expressions)-2), 
-             prior = pc_prior)
-res # 5
+             prior = pc_prior, scale = T)
+res 
 plot(res)
-plot(res, posterior = F)
+plot(res, posterior  = FALSE)
 
 
 ## GCV
